@@ -11,8 +11,8 @@ services:
       # Set to 'false' to use local SQLite, 'true' for Supabase
       - USE_SUPABASE=false
       # Add your Supabase credentials here when USE_SUPABASE=true
-      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL:-}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
+      - NEXT_PUBLIC_SUPABASE_URL=https://kptqknsghqmfkxtdsgmr.supabase.co
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_zudf22VVDB2u1wgCEv6XuA_5zzW2C7T
     volumes:
       # Mount data directory for SQLite (if needed for development)
       - ./data:/app/data
