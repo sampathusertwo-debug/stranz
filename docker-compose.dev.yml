@@ -1,0 +1,27 @@
+# Docker Compose override for development
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+version: '3.8'
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deps # Only build dependencies for faster rebuilds
+    environment:
+      - NODE_ENV=development
+      - USE_SUPABASE=false
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+      - ./data:/app/data
+    command: npm run dev
+    ports:
+      - "3000:3000" # Expose for direct access during development
+
+  nginx:
+    ports:
+      - "8080:80" # Use different port for development to avoid conflicts
