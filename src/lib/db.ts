@@ -27,6 +27,7 @@ type DatabaseSchema = {
 };
 
 let localDb: any = null;
+let isInitialized = false;
 
 // Initialize lowdb database for local development
 async function getLocalDB() {
@@ -52,18 +53,22 @@ async function getLocalDB() {
     };
 
     localDb = await JSONFilePreset<DatabaseSchema>(dbPath, defaultData);
-  }
-  
-  // Always check if reference data needs to be initialized
-  if (localDb.data.vehicle_types.length === 0) {
-    await insertDefaultReferenceData();
+    
+    // Initialize reference data only once
+    if (!isInitialized && localDb.data.vehicle_types.length === 0) {
+      isInitialized = true;
+      await insertDefaultReferenceData();
+    }
   }
   
   return localDb;
 }
 
 async function insertDefaultReferenceData() {
-  const database = await getLocalDB();
+  if (!localDb) {
+    throw new Error('Database not initialized');
+  }
+  const database = localDb;
   
   // Insert vehicle types
   const vehicleTypes = [
