@@ -270,13 +270,13 @@ export default function ExpensesPage() {
                       {currentMonth.split(' ')[0]} Trip Expenses
                     </Typography>
                     <Typography sx={{ fontSize: '18px', fontWeight: 600, color: '#2B2D42' }}>
-                      ₹ {totalTripExpense.toLocaleString()}
+                      ₹ {totalTruckExpense.toLocaleString()}
                     </Typography>
                   </Box>
                   <Button
                     variant="contained"
                     fullWidth
-                    onClick={() => handleOpenExpense('trip')}
+                    onClick={() => handleOpenExpense('booking')}
                     sx={{ 
                       mb: 2, 
                       bgcolor: '#2196F3',
@@ -291,8 +291,8 @@ export default function ExpensesPage() {
                     placeholder="Search Trip Expense"
                     size="small"
                     fullWidth
-                    value={tripExpenseSearch}
-                    onChange={(e) => setTripExpenseSearch(e.target.value)}
+                    value={bookingExpenseSearch}
+                    onChange={(e) => setBookingExpenseSearch(e.target.value)}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
