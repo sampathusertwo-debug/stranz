@@ -107,10 +107,10 @@ CREATE TABLE IF NOT EXISTS quotes (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Trips Table (Bookings)
-CREATE TABLE IF NOT EXISTS trips (
+-- Bookings Table (replaces old trips)
+CREATE TABLE IF NOT EXISTS bookings (
   id BIGSERIAL PRIMARY KEY,
-  trip_number TEXT UNIQUE,
+  booking_number TEXT UNIQUE,
   party_id BIGINT NOT NULL REFERENCES parties(id),
   truck_id BIGINT REFERENCES trucks(id),
   driver_id BIGINT REFERENCES drivers(id),
@@ -134,12 +134,50 @@ CREATE TABLE IF NOT EXISTS trips (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Vendors Table (for vendor vehicles)
+CREATE TABLE IF NOT EXISTS vendors (
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT,
+  alternate_phone TEXT,
+  email TEXT,
+  address TEXT,
+  city TEXT,
+  state TEXT,
+  pincode TEXT,
+  gst_number TEXT,
+  pan_number TEXT,
+  contact_person TEXT,
+  is_active BOOLEAN DEFAULT true,
+  balance DECIMAL DEFAULT 0,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Booking Vehicles Table (multiple vehicles per booking)
+CREATE TABLE IF NOT EXISTS booking_vehicles (
+  id BIGSERIAL PRIMARY KEY,
+  booking_id BIGINT NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+  vehicle_type_id BIGINT NOT NULL REFERENCES vehicle_types(id),
+  vehicle_source TEXT NOT NULL CHECK(vehicle_source IN ('own', 'vendor')),
+  truck_id BIGINT REFERENCES trucks(id),
+  vendor_id BIGINT REFERENCES vendors(id),
+  vehicle_number TEXT,
+  driver_id BIGINT REFERENCES drivers(id),
+  driver_name TEXT,
+  driver_phone TEXT,
+  amount DECIMAL,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Invoices Table
 CREATE TABLE IF NOT EXISTS invoices (
   id BIGSERIAL PRIMARY KEY,
   invoice_number TEXT NOT NULL UNIQUE,
   party_id BIGINT NOT NULL REFERENCES parties(id),
-  trip_id BIGINT REFERENCES trips(id),
+  booking_id BIGINT REFERENCES bookings(id),
   truck_id BIGINT REFERENCES trucks(id),
   driver_id BIGINT REFERENCES drivers(id),
   from_location TEXT,
@@ -159,7 +197,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 -- Expenses Table
 CREATE TABLE IF NOT EXISTS expenses (
   id BIGSERIAL PRIMARY KEY,
-  trip_id BIGINT REFERENCES trips(id),
+  booking_id BIGINT REFERENCES bookings(id),
   truck_id BIGINT REFERENCES trucks(id),
   category_id BIGINT REFERENCES expense_categories(id),
   expense_type TEXT NOT NULL,
@@ -174,7 +212,7 @@ CREATE TABLE IF NOT EXISTS expenses (
 CREATE TABLE IF NOT EXISTS tips (
   id BIGSERIAL PRIMARY KEY,
   driver_id BIGINT NOT NULL REFERENCES drivers(id),
-  trip_id BIGINT REFERENCES trips(id),
+  booking_id BIGINT REFERENCES bookings(id),
   amount DECIMAL NOT NULL,
   description TEXT,
   tip_date DATE,
@@ -187,17 +225,21 @@ CREATE INDEX IF NOT EXISTS idx_trucks_driver ON trucks(driver_id);
 CREATE INDEX IF NOT EXISTS idx_trucks_vehicle_type ON trucks(vehicle_type_id);
 CREATE INDEX IF NOT EXISTS idx_quotes_party ON quotes(party_id);
 CREATE INDEX IF NOT EXISTS idx_quotes_vehicle_type ON quotes(vehicle_type_id);
-CREATE INDEX IF NOT EXISTS idx_trips_party ON trips(party_id);
-CREATE INDEX IF NOT EXISTS idx_trips_truck ON trips(truck_id);
-CREATE INDEX IF NOT EXISTS idx_trips_driver ON trips(driver_id);
-CREATE INDEX IF NOT EXISTS idx_trips_vehicle_type ON trips(vehicle_type_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_party ON bookings(party_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_truck ON bookings(truck_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_driver ON bookings(driver_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_vehicle_type ON bookings(vehicle_type_id);
+CREATE INDEX IF NOT EXISTS idx_booking_vehicles_booking ON booking_vehicles(booking_id);
+CREATE INDEX IF NOT EXISTS idx_booking_vehicles_truck ON booking_vehicles(truck_id);
+CREATE INDEX IF NOT EXISTS idx_booking_vehicles_vendor ON booking_vehicles(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_booking_vehicles_driver ON booking_vehicles(driver_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_party ON invoices(party_id);
-CREATE INDEX IF NOT EXISTS idx_invoices_trip ON invoices(trip_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_booking ON invoices(booking_id);
 CREATE INDEX IF NOT EXISTS idx_invoices_truck ON invoices(truck_id);
-CREATE INDEX IF NOT EXISTS idx_expenses_trip ON expenses(trip_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_booking ON expenses(booking_id);
 CREATE INDEX IF NOT EXISTS idx_expenses_category ON expenses(category_id);
 CREATE INDEX IF NOT EXISTS idx_tips_driver ON tips(driver_id);
-CREATE INDEX IF NOT EXISTS idx_tips_trip ON tips(trip_id);
+CREATE INDEX IF NOT EXISTS idx_tips_booking ON tips(booking_id);
 
 -- Insert default vehicle types
 INSERT INTO vehicle_types (name, code, description, typical_capacity_tons, image_url) VALUES
@@ -227,10 +269,10 @@ INSERT INTO expense_categories (name, code, description, is_active) VALUES
   ('Internet', 'internet', 'Internet and phone bill', true),
   ('Stationery', 'stationery', 'Office stationery', true),
   ('Miscellaneous', 'misc', 'Other miscellaneous expenses', true)
-ON CONFLICT (code) DO NOTHING;
-
--- Insert default status types
-INSERT INTO status_types (category, name, code, description, display_order) VALUES
+ON Cbooking', 'Booked', 'booked', 'Booking confirmed', 1),
+  ('booking', 'In Transit', 'in_transit', 'Booking in progress', 2),
+  ('booking', 'Completed', 'completed', 'Booking completed', 3),
+  ('booking', 'Cancelled', 'cancelled', 'Bookingcode, description, display_order) VALUES
   ('trip', 'Booked', 'booked', 'Trip booked', 1),
   ('trip', 'In Transit', 'in_transit', 'Trip in progress', 2),
   ('trip', 'Completed', 'completed', 'Trip completed', 3),

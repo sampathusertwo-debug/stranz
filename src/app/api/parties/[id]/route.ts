@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -20,9 +22,9 @@ export async function GET(
       
       if (partyError) throw partyError;
 
-      // Get trips for this party to calculate balance
+      // Get bookings for this party to calculate balance
       const { data: trips, error: tripsError } = await supabase
-        .from('trips')
+        .from('bookings')
         .select('balance_amount')
         .eq('party_id', params.id);
       
@@ -41,8 +43,8 @@ export async function GET(
         return NextResponse.json({ error: 'Party not found' }, { status: 404 });
       }
 
-      // Get trips for this party to calculate balance
-      const trips = await db.sqlite.getAll('trips');
+      // Get bookings for this party to calculate balance
+      const trips = await db.sqlite.getAll('bookings');
       const partyTrips = (trips || []).filter((trip: any) => trip.party_id === id);
       const calculatedBalance = partyTrips.reduce((sum: number, trip: any) => sum + (trip.balance_amount || 0), 0);
 
@@ -63,14 +65,14 @@ export async function PUT(
 ) {
   try {
     const body = await request.json();
-    const { name, phone, email, address, gst_number } = body;
+    const { name, phone, email, address, city, state, gst_number, pan_number, contact_person } = body;
     const id = parseInt(params.id);
 
     if (db.isUsingSupabase()) {
       const supabase = db.supabase();
       const { data, error } = await supabase
         .from('parties')
-        .update({ name, phone, email, address, gst_number, updated_at: new Date().toISOString() })
+        .update({ name, phone, email, address, city, state, gst_number, pan_number, contact_person, updated_at: new Date().toISOString() })
         .eq('id', params.id)
         .select()
         .single();
@@ -78,7 +80,7 @@ export async function PUT(
       if (error) throw error;
       return NextResponse.json(data);
     } else {
-      const data = await db.sqlite.update('parties', id, { name, phone, email, address, gst_number });
+      const data = await db.sqlite.update('parties', id, { name, phone, email, address, city, state, gst_number, pan_number, contact_person });
       return NextResponse.json(data);
     }
   } catch (error) {

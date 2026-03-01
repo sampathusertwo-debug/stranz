@@ -13,13 +13,10 @@ interface InvoiceData {
   from_location: string;
   to_location: string;
   start_date: string;
-  end_date: string;
   material_description: string;
   weight_tons: number;
   lr_number: string;
-  freight_amount: number;
-  advance_amount: number;
-  balance_amount: number;
+  total_amount: number;
   billing_type: string;
 }
 
@@ -160,10 +157,6 @@ const InvoicePDF = forwardRef<HTMLDivElement, InvoicePDFProps>(({ data }, ref) =
               <TableCell>{formatDate(data.start_date)}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600 }}>End Date</TableCell>
-              <TableCell>{formatDate(data.end_date)}</TableCell>
-            </TableRow>
-            <TableRow>
               <TableCell sx={{ fontWeight: 600 }}>Billing Type</TableCell>
               <TableCell sx={{ textTransform: 'uppercase' }}>{data.billing_type}</TableCell>
             </TableRow>
@@ -174,34 +167,12 @@ const InvoicePDF = forwardRef<HTMLDivElement, InvoicePDFProps>(({ data }, ref) =
       {/* Charges */}
       <Box sx={{ mt: 4 }}>
         <Paper sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              Freight Charges:
-            </Typography>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              {formatCurrency(data.freight_amount)}
-            </Typography>
-          </Box>
-          
-          <Divider sx={{ my: 2 }} />
-          
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Typography variant="body2" color="text.secondary">
-              Advance Paid:
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {formatCurrency(data.advance_amount)}
-            </Typography>
-          </Box>
-
-          <Divider sx={{ my: 2, borderWidth: 2, borderColor: '#0D3B66' }} />
-
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="h6" sx={{ fontWeight: 700, color: '#EA7847' }}>
-              Balance Amount:
+              Total Amount:
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 700, color: '#EA7847' }}>
-              {formatCurrency(data.balance_amount)}
+              {formatCurrency(data.total_amount)}
             </Typography>
           </Box>
         </Paper>
@@ -210,11 +181,11 @@ const InvoicePDF = forwardRef<HTMLDivElement, InvoicePDFProps>(({ data }, ref) =
       {/* Amount in Words */}
       <Box sx={{ mt: 3, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
         <Typography variant="body2" sx={{ fontWeight: 600, color: '#666' }}>
-          Balance Amount in Words:
+          Total Amount in Words:
         </Typography>
         <Typography variant="body1" sx={{ fontWeight: 600, color: '#0D3B66', mt: 1 }}>
           {/* You can add number-to-words conversion here */}
-          Rupees {data.balance_amount.toFixed(0)} Only
+          Rupees {data.total_amount.toFixed(0)} Only
         </Typography>
       </Box>
 

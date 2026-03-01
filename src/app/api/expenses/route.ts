@@ -7,23 +7,11 @@ export async function GET() {
       const supabase = db.supabase();
       const { data, error } = await supabase
         .from('expenses')
-        .select(`
-          *,
-          trip:trips(trip_number),
-          truck:trucks(truck_number)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      
-      // Transform data
-      const transformedData = data?.map((expense: any) => ({
-        ...expense,
-        trip_number: expense.trip?.trip_number,
-        truck_number: expense.truck?.truck_number,
-      })) || [];
-      
-      return NextResponse.json(transformedData);
+      return NextResponse.json(data || []);
     } else {
       const data = await db.sqlite.getAll('expenses');
       return NextResponse.json(data || []);
@@ -37,20 +25,20 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { invoice_id, truck_id, trip_id, expense_type, amount, description, expense_date } = body;
+    const { invoice_id, truck_id, booking_id, expense_type, amount, description, expense_date } = body;
 
     if (db.isUsingSupabase()) {
       const supabase = db.supabase();
       const { data, error } = await supabase
         .from('expenses')
-        .insert([{ invoice_id, truck_id, trip_id, expense_type, amount, description, expense_date }])
+        .insert([{ invoice_id, truck_id, booking_id, expense_type, amount, description, expense_date }])
         .select()
         .single();
 
       if (error) throw error;
       return NextResponse.json(data, { status: 201 });
     } else {
-      const data = db.sqlite.insert('expenses', { invoice_id, truck_id, trip_id, expense_type, amount, description, expense_date });
+      const data = db.sqlite.insert('expenses', { invoice_id, truck_id, booking_id, expense_type, amount, description, expense_date });
       return NextResponse.json(data, { status: 201 });
     }
   } catch (error) {

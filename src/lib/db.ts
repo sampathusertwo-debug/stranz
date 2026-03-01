@@ -24,6 +24,9 @@ type DatabaseSchema = {
   payments: any[];
   expenses: any[];
   tips: any[];
+  vendors: any[];
+  bookings: any[];
+  booking_vehicles: any[];
 };
 
 let localDb: any = null;
@@ -50,10 +53,26 @@ async function getLocalDB() {
       payments: [],
       expenses: [],
       tips: [],
+      vendors: [],
+      bookings: [],
+      booking_vehicles: [],
     };
 
     localDb = await JSONFilePreset<DatabaseSchema>(dbPath, defaultData);
     
+    // Ensure all required tables exist (for databases created before schema additions)
+    const requiredTables = Object.keys(defaultData) as (keyof DatabaseSchema)[];
+    let needsWrite = false;
+    for (const table of requiredTables) {
+      if (!localDb.data[table]) {
+        localDb.data[table] = [];
+        needsWrite = true;
+      }
+    }
+    if (needsWrite) {
+      await localDb.write();
+    }
+
     // Initialize reference data only once
     if (!isInitialized && localDb.data.vehicle_types.length === 0) {
       isInitialized = true;
@@ -169,14 +188,20 @@ export const db = {
       const database = await getLocalDB();
       const tableData = database.data[table as keyof DatabaseSchema] as any[];
       
-      const newId = getNextId(tableData);
+      if (!tableData) {
+        // Table doesn't exist yet, initialize it
+        (database.data as any)[table] = [];
+      }
+      
+      const rows = database.data[table as keyof DatabaseSchema] as any[];
+      const newId = getNextId(rows);
       const newItem = {
         ...data,
         id: newId,
         created_at: new Date().toISOString(),
       };
       
-      tableData.push(newItem);
+      rows.push(newItem);
       await database.write();
       
       return newItem;

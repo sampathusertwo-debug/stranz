@@ -744,11 +744,11 @@ export default function DashboardPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Party Revenue Report Dialog */}
+      {/* Customer Revenue Report Dialog */}
       <Dialog open={partyRevenueOpen} onClose={() => setPartyRevenueOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Party Revenue Report
+            Customer Revenue Report
           </Typography>
           <IconButton onClick={() => setPartyRevenueOpen(false)}>
             <Close />
@@ -769,7 +769,7 @@ export default function DashboardPage() {
             <Table size="small">
               <TableHead sx={{ bgcolor: '#FAFAFA' }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Party Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Customer Name</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 600 }}>Trips</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 600 }}>Month's Income</TableCell>
                 </TableRow>
@@ -805,11 +805,11 @@ export default function DashboardPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Party Balance Report Dialog */}
+      {/* Customer Balance Report Dialog */}
       <Dialog open={partyBalanceOpen} onClose={() => setPartyBalanceOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Party Balance Report
+            Customer Balance Report
           </Typography>
           <IconButton onClick={() => setPartyBalanceOpen(false)}>
             <Close />
@@ -820,7 +820,7 @@ export default function DashboardPage() {
             <Table size="small">
               <TableHead sx={{ bgcolor: '#FAFAFA' }}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Party Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Customer Name</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Phone</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 600 }}>Balance</TableCell>
                 </TableRow>
@@ -875,7 +875,7 @@ export default function DashboardPage() {
               <TableHead sx={{ bgcolor: '#FAFAFA' }}>
                 <TableRow>
                   <TableCell sx={{ fontWeight: 600 }}>Date</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Party</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Customer</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Truck</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Route</TableCell>
                   <TableCell align="right" sx={{ fontWeight: 600 }}>Amount</TableCell>

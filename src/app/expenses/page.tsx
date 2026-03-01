@@ -30,7 +30,7 @@ interface Expense {
   description: string;
   expense_date: string;
   truck_id?: number;
-  trip_id?: number;
+  booking_id?: number;
 }
 
 const getMonthYear = () => {
@@ -41,13 +41,13 @@ const getMonthYear = () => {
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [truckExpenseSearch, setTruckExpenseSearch] = useState('');
-  const [tripExpenseSearch, setTripExpenseSearch] = useState('');
+  const [bookingExpenseSearch, setBookingExpenseSearch] = useState('');
   const [officeExpenseSearch, setOfficeExpenseSearch] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [currentMonth] = useState(getMonthYear());
   const [expenseDialog, setExpenseDialog] = useState(false);
-  const [expenseCategory, setExpenseCategory] = useState<'truck' | 'trip' | 'office'>('truck');
+  const [expenseCategory, setExpenseCategory] = useState<'truck' | 'booking' | 'office'>('truck');
 
   useEffect(() => {
     fetchExpenses();
@@ -79,14 +79,14 @@ export default function ExpensesPage() {
   
   // Categorize expenses
   const truckExpenses = monthExpenses.filter(exp => exp.truck_id);
-  const tripExpenses = monthExpenses.filter(exp => exp.trip_id);
-  const officeExpenses = monthExpenses.filter(exp => !exp.truck_id && !exp.trip_id);
+  const bookingExpenses = monthExpenses.filter(exp => exp.booking_id);
+  const officeExpenses = monthExpenses.filter(exp => !exp.truck_id && !exp.booking_id);
   
   const totalTruckExpense = truckExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
-  const totalTripExpense = tripExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
+  const totalBookingExpense = bookingExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
   const totalOfficeExpense = officeExpenses.reduce((sum, exp) => sum + (exp.amount || 0), 0);
 
-  const handleOpenExpense = (category: 'truck' | 'trip' | 'office') => {
+  const handleOpenExpense = (category: 'truck' | 'booking' | 'office') => {
     setExpenseCategory(category);
     setExpenseDialog(true);
   };

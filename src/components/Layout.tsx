@@ -45,7 +45,8 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { text: 'Dashboard', icon: <Assessment />, path: '/parties' },
   { text: 'Quotes', icon: <People />, path: '/quotes' },
-  { text: 'Bookings', icon: <LocationOn />, path: '/trips' },
+  { text: 'Bookings', icon: <LocationOn />, path: '/bookings' },
+  { text: 'Customers', icon: <People />, path: '/customers' },
   { text: 'Suppliers', icon: <PersonOutline />, path: '/suppliers' },
   { text: 'Drivers', icon: <DirectionsCar />, path: '/drivers' },
   { text: 'Trucks', icon: <LocalShipping />, path: '/trucks' },
