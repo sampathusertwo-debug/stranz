@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   Container,
   Typography,
@@ -35,7 +35,7 @@ import { Save, CalendarToday, ArrowBack, ArrowForward, ExpandMore, ExpandLess, A
 import Layout from '@/components/Layout';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function NewBookingPage() {
+function NewBookingPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get('edit');
@@ -973,5 +973,13 @@ export default function NewBookingPage() {
         </Box>
       </Container>
     </Layout>
+  );
+}
+
+export default function NewBookingPage() {
+  return (
+    <Suspense fallback={null}>
+      <NewBookingPageInner />
+    </Suspense>
   );
 }
